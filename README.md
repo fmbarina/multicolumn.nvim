@@ -2,9 +2,9 @@
 
 A Neovim plugin to (hopefully) satisfy all your colorcolumn needs.
 
-|![c-full-to-end](https://github.com/fmbarina/multicolumn.nvim/assets/70731450/110de78a-01cb-41fd-b1d8-c29b1ced89d4)|![lua-file-full](https://github.com/fmbarina/multicolumn.nvim/assets/70731450/4f6cafaf-e2e8-4239-af42-6cf41f2d2b98)|
+|![c-full-to-end](https://github.com/fmbarina/multicolumn.nvim/assets/70731450/67928475-c863-4697-9bbe-bc4d157e0400)|![lua-file-full](https://github.com/fmbarina/multicolumn.nvim/assets/70731450/e57709c8-6b09-4287-8e9a-33aea1f91452)|
 |-|-|
-|![py-to-end-win](https://github.com/fmbarina/multicolumn.nvim/assets/70731450/85d8022e-d22b-44ac-9882-79e2eb0e6ad8)|![git-mixed-set](https://github.com/fmbarina/multicolumn.nvim/assets/70731450/9709f80c-a3fd-4720-9de6-431a6fea5de9)|
+|![py-to-end-win](https://github.com/fmbarina/multicolumn.nvim/assets/70731450/99ff8362-3cc5-4c10-b8bb-b7e2225e49ae)|![git-mixed-set](https://github.com/fmbarina/multicolumn.nvim/assets/70731450/50e97396-9c3d-4129-9579-ca17c7d39792)|
 
 ## ✨ Features
 
