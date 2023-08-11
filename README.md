@@ -1,0 +1,161 @@
+# multicolumn.nvim
+
+A Neovim plugin to (hopefully) satisfy all your colorcolumn needs.
+
+## ✨ Features
+
+- ⚙️ Highly configurable Colorcolumn
+  - 🎯 Show focused colorcolumn at desired position(s)
+  - ➡️ Highlight excess characters
+  - 🧰 Specify working scope
+  - 🌈 Define your own color values
+  - 😐 Enable always-on, when you want boring functionality
+  - ⚡ Use a callback for dynamic settings
+  - ...and all of that configurable per filetype
+- 💾 Start enabled, disabled, or remember state from last time
+- 🔌 Toggle On/Off the entire plugin
+- 🎈 Exclude floating windows - no more manually excluding lazy, mason, etc.
+- 📄 Exclude specific filetypes
+
+## 📦 Installation
+
+For the "I know what I'm doing" users:
+- `fmbarina/multicolumn.nvim`
+- `require('multicolumn').setup(opts)` if you need.
+
+<details>
+<summary>For lazy.nvim users</summary>
+
+  Add the following to your plugin list, your settings go in opts.
+
+  ```lua
+  {
+      'fmbarina/multicolumn.nvim',
+      opts = {},
+  }
+  ```
+
+</details>
+
+<details>
+<summary>For packer.nvim users</summary>
+
+  Installation:
+
+  ```lua
+  use('fmbarina/multicolumn.nvim')
+  ```
+
+  Setup:
+
+  ```lua
+  require('multicolumn').setup()
+  ```
+
+  Your settings can be passed through the setup function.
+
+</details>
+
+## 🔧 Configuration
+
+The settings table (`opts`) may define the following fields.
+
+| Setting              | Type                                          | Description                                                                                                    |
+|----------------------|-----------------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| **start**            | `string`: `enabled`, `disabled` or `remember` | Plugin start behavior opening neovim. When `remember`, the plugin will persist state through neovim sessions.  |
+| **base_set**         | `table`: set, see below                       | Base set all other sets inherit from when options are missing.                                                 |
+| **sets**             | `table[]`: set list, see below                | Defines plugin behavior for each defined `filetype` set. Accepts a `default` set for fallback behavior.        |
+| **line_limit**       | `int`                                         | Maximum lines allowed for `file` scope line scanning. When `0`, there is no limit.                             |
+| **exclude_floating** | `bool`                                        | Whether the plugin should be disabled in floating windows, such as mason.nvim and lazy.nvim.                   |
+| **exclude_ft**       | `string[]`                                    | List of filetypes (strings) the plugin should be disabled under.                                               |
+
+### Sets
+
+A `set` defines a _set of options_ governing colorcolumn behavior i.e. it's a table that tells multicolumn.nvim which features to use and how.
+
+- When editing a file, multicolumn.nvim looks for a set with the same name as the `filetype` of the file.
+- If a `filetype` set isn't found, it uses the `default` set (that's the actual name) defined in `sets`
+- If a set is missing an option, it's inherited from the `base_set` (including the `default` set)
+- Also, a set may be a `function(buf, win) -> set`, so you can hook into neovim to build dynamic sets.
+
+These are the options that multicolumn.nvim looks for in a set:
+
+| Option          | Type                                 | Description                                                                                         |
+|-----------------|--------------------------------------|-----------------------------------------------------------------------------------------------------|
+| **scope**       | `string`: `file`, `window` or `line` | Scope that the plugin will scan and generate colorcolumns for                                       |
+| **rulers**      | `int[]`                              | List of integers defining the colorcolumn numbers. Remember: if the max line length is 80, use 81   |
+| **to_line_end** | `bool`                               | Whether to highlight characters exceeding the colorcolumn to the end of the line                    |
+| **full_column** | `bool`                               | Whether to draw a full colorcolumn (window ceiling to bottom) when the column number is hit         |
+| **always_on**   | `bool`                               | Whether to always draw the full colorcolumns. When true, implies `full_column` is true as well      |
+| **bg_color**    | `string`: hex code (e.g. "#c92aaf")  | Background highlight color of the colorcolumn as a hex code                                         |
+| **fg_color**    | `string`: hex code (e.g. "#c92aaf")  | Foreground highlight color of the colorcolumn as a hex code                                         |
+
+### Default settings
+
+`multicolumn.nvim` comes with the following defaults:
+
+```lua
+start = 'enabled',
+base_set = {
+  scope = 'window',
+  rulers = {},
+  to_line_end = false,
+  full_column = false,
+  always_on = false,
+  bg_color = nil,
+  fg_color = nil,
+},
+sets = {
+  default = {
+    rulers = { 81 },
+  },
+},
+line_limit = 6000,
+exclude_floating = true,
+exclude_ft = { 'markdown', 'help', 'netrw' },
+```
+
+### Banner settings
+
+<details>
+<summary>Click me to see the settings used in the image(s) at the top of the README</summary>
+
+  ```lua
+  sets = {
+      lua = {
+          scope = 'file',
+          rulers = { 81 },
+          full_column = true,
+      },
+      python = {
+          scope = 'window',
+          rulers = { 80 },
+          to_line_end = true,
+          bg_color = '#f08800',
+          fg_color = '#17172e',
+      },
+      c = {
+          scope = 'window',
+          rulers = { 81 },
+          to_line_end = true,
+          always_on = true,
+      },
+      NeogitCommitMessage = function(buf, win)
+          local T = function(c, x, y) if c then return x else return y end
+          return {
+              scope = T(vim.fn.line('.', win) == 1, 'line', 'window'),
+              rulers = { T(vim.fn.line('.', win) == 1, 51, 73) },
+              to_line_end = true,
+              bg_color = '#691b1b',
+              fg_color = '#ffd8ad',
+          }
+      end,
+  },
+  ```
+
+</details>
+
+## 🙇 Acknowledgements
+
+This plugin draws great inpiration from [NeoColumn.nvim](https://github.com/ecthelionvi/NeoColumn.nvim "Thank you, Robert!") and [smartcolumn.nvim](https://github.com/m4xshen/smartcolumn.nvim "Thank you, Max!"). They were used as references and even some terms were borrowed from them, but more than that, they were what pushed me to create this plugin. Multicolumn wouldn't exist without them, so, thank you!
+
