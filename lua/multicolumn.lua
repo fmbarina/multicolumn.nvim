@@ -31,7 +31,7 @@ local config = {
   exclude_ft = { 'markdown', 'help', 'netrw' },
 }
 
-local function get_hi_value(group, attr)
+local function get_hl_value(group, attr)
   return vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID(group)), attr .. '#')
 end
 
@@ -171,11 +171,11 @@ local function reload()
 
   if buffer_disabled(win) then return false end
 
-  -- If get_hi_value is called in enable() the right ColorColumn hl may not be
+  -- If get_hl_value is called in enable() the right ColorColumn hl may not be
   -- set during setup (ex: due to a theme plugin). Here, that's less likely
   if m.first_reload then
-    m.bg_color = get_hi_value('ColorColumn', 'bg')
-    m.fg_color = get_hi_value('ColorColumn', 'fg')
+    m.bg_color = get_hl_value('ColorColumn', 'bg')
+    m.fg_color = get_hl_value('ColorColumn', 'fg')
     m.first_reload = false
   end
 
