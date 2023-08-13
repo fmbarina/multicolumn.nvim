@@ -87,7 +87,7 @@ local function update_colorcolumn(ruleset, buf, win)
 
   if (state ~= vim.b.prev_state) or (rulers ~= vim.b.prev_rulers) then
     vim.b.prev_state = state
-    vim.b.prev_rulers = ruleset.rulers
+    vim.b.prev_rulers = rulers
 
     if state then
       vim.wo[win].colorcolumn = rulers
