@@ -140,14 +140,10 @@ local function update(buf, win)
 
   if ruleset.full_column or ruleset.always_on then
     update_colorcolumn(ruleset, buf, win)
-  else
-    clear_colorcolum(win)
   end
 
   if (not ruleset.full_column) or ruleset.to_line_end then
     update_matches(ruleset)
-  else
-    vim.fn.clearmatches(win)
   end
 
   return false
