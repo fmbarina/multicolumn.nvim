@@ -159,6 +159,9 @@ local function reload()
     clear_colorcolum(fwin)
     vim.fn.clearmatches(fwin)
   end
+  for _, fbuf in pairs(vim.api.nvim_list_bufs()) do
+    vim.b[fbuf].prev_state = nil
+  end
 
   if buffer_disabled(win) then return false end
 
