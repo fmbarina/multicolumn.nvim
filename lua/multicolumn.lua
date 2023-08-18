@@ -77,12 +77,7 @@ local function get_exceeded(ruleset, buf, win)
 end
 
 local function update_colorcolumn(ruleset, buf, win)
-  if ruleset.always_on then
-    vim.wo[win].colorcolumn = table.concat(ruleset.rulers, ',')
-    return
-  end
-
-  local state = get_exceeded(ruleset, buf, win)
+  local state = ruleset.always_on or get_exceeded(ruleset, buf, win)
   local rulers = table.concat(ruleset.rulers, ',')
 
   if (state ~= vim.b.prev_state) or (rulers ~= vim.b.prev_rulers) then
