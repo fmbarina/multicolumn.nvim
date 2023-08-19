@@ -113,16 +113,19 @@ local function update_matches(ruleset)
 end
 
 local function update(buf, win)
-  local ruleset = vim.deepcopy(config.base_set)
+  local ruleset = {}
 
-  if config.sets[vim.bo.filetype] == nil then
-    ruleset = vim.tbl_deep_extend('force', ruleset, config.sets.default)
-  elseif type(config.sets[vim.bo.filetype]) == 'function' then
+  if type(config.sets[vim.bo.filetype]) == 'function' then
     local ok, result = pcall(config.sets[vim.bo.filetype], buf, win)
-    if ok and ruleset ~= nil then ruleset = result end
+    if ok and result ~= nil then
+      ruleset = vim.tbl_extend('keep', result, config.base_set)
+    else
+      return true
+    end
+  elseif config.sets[vim.bo.filetype] ~= nil then
+    ruleset = config.sets[vim.bo.filetype]
   else
-    ruleset =
-      vim.tbl_deep_extend('force', ruleset, config.sets[vim.bo.filetype])
+    ruleset = config.sets.default
   end
 
   if
@@ -187,17 +190,29 @@ local function reload()
   update(buf, win)
 end
 
-local function build_config(cfg)
-  local new_config = vim.deepcopy(cfg)
-  for k, _ in pairs(cfg.sets) do
-    if type(cfg.sets[k]) == 'function' then
-      new_config.sets[k] = cfg.sets[k]
-    else
-      new_config.sets[k] =
-        vim.tbl_deep_extend('keep', cfg.sets[k], cfg.base_set)
+local function fix_set(set)
+  -- Some configs imply others. Fixing nonsensical stuff early on helps simply
+  -- code later by reducing the amount of cases that must be handled.
+  if set.always_on then
+    set.full_column = true -- Implied when always_on
+    if set.scope == 'file' then
+      set.scope = 'window' -- Needn't scope file if column is always on
     end
   end
-  return config
+  if set.scope == 'file' and not set.full_column then
+    set.scope = 'window' -- Needn't scope file if not even drawing full column
+  end
+  return set
+end
+
+local function build_config(opts)
+  local cfg = vim.tbl_deep_extend('force', config, opts)
+  for k, _ in pairs(cfg.sets) do
+    if not (type(cfg.sets[k]) == 'function') then
+      cfg.sets[k] = fix_set(vim.tbl_extend('keep', cfg.sets[k], cfg.base_set))
+    end
+  end
+  return cfg
 end
 
 local function save_enabled_state()
@@ -259,8 +274,7 @@ M.toggle = function()
 end
 
 M.setup = function(opts)
-  config = vim.tbl_deep_extend('force', config, opts or {})
-  config = build_config(config)
+  config = build_config(opts or {})
 
   local start_enabled = false
   if config.start == 'remember' then
