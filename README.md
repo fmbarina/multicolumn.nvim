@@ -94,6 +94,11 @@ These are the options that multicolumn.nvim looks for in a set:
 | **bg_color**    | `string`: hex code (e.g. "#c92aaf")  | Background highlight color of the colorcolumn as a hex code                                         |
 | **fg_color**    | `string`: hex code (e.g. "#c92aaf")  | Foreground highlight color of the colorcolumn as a hex code                                         |
 
+Note that some options are related and may override your configuration, but this *should* only happen in ways you'd expect (and hopefully want):
+
+- `always_on` → `full_column` (because you can't have an always on focused column)
+- `scope` is `file`, but `full_column` not true → `scope` is reduced to `window` (saving some cpu cycles)
+
 ### Default settings
 
 `multicolumn.nvim` comes with the following defaults:
