@@ -25,6 +25,7 @@ local config = {
     },
   },
   max_lines = 6000, -- 0 (disabled) OR int
+  use_default_set = true,
   exclude_floating = true,
   exclude_ft = { 'markdown', 'help', 'netrw' },
 }
@@ -44,9 +45,13 @@ local function clear_colorcolum(win)
 end
 
 local function buffer_disabled(win)
-  if config.exclude_floating and is_floating(win) then
-    return true
-  elseif vim.tbl_contains(config.exclude_ft, vim.bo.filetype) then
+  if config.use_default_set then
+    if config.exclude_floating and is_floating(win) then
+      return true
+    elseif vim.tbl_contains(config.exclude_ft, vim.bo.filetype) then
+      return true
+    end
+  elseif config.sets[vim.bo.filetype] == nil then
     return true
   end
   return false
@@ -124,8 +129,10 @@ local function update(buf, win)
     end
   elseif config.sets[vim.bo.filetype] ~= nil then
     ruleset = config.sets[vim.bo.filetype]
-  else
+  elseif config.use_default_set then
     ruleset = config.sets.default
+  else
+    return true -- shoudn't happen on a proper config?
   end
 
   if
