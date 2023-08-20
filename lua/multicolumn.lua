@@ -44,6 +44,16 @@ local function clear_colorcolum(win)
   if vim.wo[win].colorcolumn then vim.wo[win].colorcolumn = nil end
 end
 
+local function clear_all()
+  for _, win in pairs(vim.api.nvim_list_wins()) do
+    clear_colorcolum(win)
+    vim.fn.clearmatches(win)
+  end
+  for _, buf in pairs(vim.api.nvim_list_bufs()) do
+    vim.b[buf].prev_state = nil
+  end
+end
+
 local function buffer_disabled(win)
   if config.use_default_set then
     if config.exclude_floating and is_floating(win) then
@@ -166,13 +176,8 @@ local function reload()
   -- HACK: del_augroup and clear_autocmds will error(?) if group or
   -- autocmd don't exist, respectively, so just create an empty one
   vim.api.nvim_create_augroup('MulticolumnUpdate', {})
-  for _, fwin in pairs(vim.api.nvim_list_wins()) do
-    clear_colorcolum(fwin)
-    vim.fn.clearmatches(fwin)
-  end
-  for _, fbuf in pairs(vim.api.nvim_list_bufs()) do
-    vim.b[fbuf].prev_state = nil
-  end
+
+  clear_all()
 
   -- HACK: ft might not be set fast enough? unsure, but force reloading fixes it
   if vim.bo.filetype == '' then
@@ -272,10 +277,7 @@ M.disable = function()
     fg = fg_color,
   })
 
-  for _, win in pairs(vim.api.nvim_list_wins()) do
-    vim.fn.clearmatches(win)
-    vim.wo[win].colorcolumn = nil
-  end
+  clear_all()
 end
 
 M.toggle = function()
