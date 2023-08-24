@@ -191,7 +191,7 @@ local function reload()
 end
 
 local function fix_set(set)
-  -- Some configs imply others. Fixing nonsensical stuff early on helps simply
+  -- Some configs imply others. Fixing nonsensical stuff early on helps simplify
   -- code later by reducing the amount of cases that must be handled.
   if set.always_on then
     set.full_column = true -- Implied when always_on
