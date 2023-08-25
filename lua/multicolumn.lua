@@ -243,6 +243,7 @@ end
 M.enable = function()
   if m.enabled then return end
 
+  reload()
   vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
     group = vim.api.nvim_create_augroup('MulticolumnReload', {}),
     callback = reload,
