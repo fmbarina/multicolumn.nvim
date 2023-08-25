@@ -69,7 +69,7 @@ The settings table (`opts`) may define the following fields.
 | **start**            | `string`: `enabled`, `disabled` or `remember` | Plugin start behavior opening neovim. When `remember`, the plugin will persist state through neovim sessions.  |
 | **base_set**         | `table`: set, see below                       | Base set all other sets inherit from when options are missing.                                                 |
 | **sets**             | `table[]`: set list, see below                | Defines plugin behavior for each defined `filetype` set. Accepts a `default` set for fallback behavior.        |
-| **line_limit**       | `int`                                         | Maximum lines allowed for `file` scope line scanning. When `0`, there is no limit.                             |
+| **max_lines**        | `int`                                         | Maximum lines allowed for `file` scope line scanning. When `0`, there is no limit.                             |
 | **exclude_floating** | `bool`                                        | Whether the plugin should be disabled in floating windows, such as mason.nvim and lazy.nvim.                   |
 | **exclude_ft**       | `string[]`                                    | List of filetypes (strings) the plugin should be disabled under.                                               |
 

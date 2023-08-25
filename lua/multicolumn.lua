@@ -3,12 +3,10 @@ local M = {}
 local MULTICOLUMN_DIR = vim.fn.stdpath('state') .. '/multicolumn'
 local ENABLED_FILE = MULTICOLUMN_DIR .. '/is-enabled'
 
-local m = {
-  enabled = nil,
-  first_reload = nil,
-  bg_color = nil,
-  fg_color = nil,
-}
+local enabled = false
+local first_reload = true
+local bg_color = nil
+local fg_color = nil
 
 local config = {
   start = 'enabled', -- enabled, disabled, remember
@@ -137,8 +135,8 @@ local function update(buf, win)
   end
 
   vim.api.nvim_set_hl(0, 'ColorColumn', {
-    bg = ruleset.bg_color or m.bg_color,
-    fg = ruleset.fg_color or m.fg_color,
+    bg = ruleset.bg_color or bg_color or '',
+    fg = ruleset.fg_color or fg_color or '',
   })
 
   if ruleset.full_column or ruleset.always_on then
@@ -177,10 +175,10 @@ local function reload()
 
   -- If get_hl_value is called in enable() the right ColorColumn hl may not be
   -- set during setup (ex: due to a theme plugin). Here, that's less likely
-  if m.first_reload then
-    m.bg_color = get_hl_value('ColorColumn', 'bg')
-    m.fg_color = get_hl_value('ColorColumn', 'fg')
-    m.first_reload = false
+  if first_reload then
+    bg_color = get_hl_value('ColorColumn', 'bg')
+    fg_color = get_hl_value('ColorColumn', 'fg')
+    first_reload = false
   end
 
   vim.api.nvim_create_autocmd(
@@ -231,7 +229,7 @@ local function save_enabled_state()
     vim.fn.mkdir(MULTICOLUMN_DIR, 'p')
   end
 
-  if m.enabled then
+  if enabled then
     local f = io.open(ENABLED_FILE, 'w')
     if f ~= nil then
       f:write('')
@@ -241,7 +239,7 @@ local function save_enabled_state()
 end
 
 M.enable = function()
-  if m.enabled then return end
+  if enabled then return end
 
   reload()
   vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
@@ -249,19 +247,19 @@ M.enable = function()
     callback = reload,
   })
 
-  m.first_reload = true
-  m.enabled = true
+  first_reload = true
+  enabled = true
 end
 
 M.disable = function()
-  if not m.enabled then return end
+  if not enabled then return end
 
   vim.api.nvim_del_augroup_by_name('MulticolumnReload')
   vim.api.nvim_del_augroup_by_name('MulticolumnUpdate')
 
   vim.api.nvim_set_hl(0, 'ColorColumn', {
-    bg = m.bg_color,
-    fg = m.fg_color,
+    bg = bg_color,
+    fg = fg_color,
   })
 
   for _, win in pairs(vim.api.nvim_list_wins()) do
@@ -269,12 +267,11 @@ M.disable = function()
     vim.wo[win].colorcolumn = nil
   end
 
-  m.first_reload = true
-  m.enabled = false
+  enabled = false
 end
 
 M.toggle = function()
-  if m.enabled then
+  if enabled then
     M.disable()
   else
     M.enable()
