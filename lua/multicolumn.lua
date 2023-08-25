@@ -164,6 +164,15 @@ local function reload()
     vim.b[fbuf].prev_state = nil
   end
 
+  -- HACK: ft might not be set fast enough? unsure, but force reloading fixes it
+  if vim.bo.filetype == '' then
+    vim.api.nvim_create_autocmd('CursorMoved', {
+      group = vim.api.nvim_create_augroup('MulticolumnHackReload', {}),
+      callback = reload,
+      once = true,
+    })
+  end
+
   if buffer_disabled(win) then return end
 
   -- If get_hl_value is called in enable() the right ColorColumn hl may not be
@@ -234,7 +243,7 @@ end
 M.enable = function()
   if m.enabled then return end
 
-  vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter', 'FileType' }, {
+  vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
     group = vim.api.nvim_create_augroup('MulticolumnReload', {}),
     callback = reload,
   })
