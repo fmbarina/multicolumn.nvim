@@ -148,16 +148,11 @@ local function update(buf, win)
   if (not ruleset.full_column) or ruleset.to_line_end then
     update_matches(ruleset)
   end
-
-  return false
 end
 
 local function reload()
   local buf = vim.api.nvim_get_current_buf()
   local win = vim.api.nvim_get_current_win()
-
-  -- HACK: stop nvim-cmp from destroying current MulticolumnUpdate
-  if vim.bo.ft == 'cmp_menu' or vim.bo.ft == 'cmp_docs' then return end
 
   -- HACK: del_augroup errors if grp doesn't exist, so just create an empty one
   vim.api.nvim_create_augroup('MulticolumnUpdate', {})
@@ -169,7 +164,7 @@ local function reload()
     vim.b[fbuf].prev_state = nil
   end
 
-  if buffer_disabled(win) then return false end
+  if buffer_disabled(win) then return end
 
   -- If get_hl_value is called in enable() the right ColorColumn hl may not be
   -- set during setup (ex: due to a theme plugin). Here, that's less likely
