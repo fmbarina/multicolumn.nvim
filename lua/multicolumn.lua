@@ -156,6 +156,9 @@ local function reload()
   local buf = vim.api.nvim_get_current_buf()
   local win = vim.api.nvim_get_current_win()
 
+  -- HACK: stop nvim-cmp from destroying current MulticolumnUpdate
+  if vim.bo.ft == 'cmp_menu' or vim.bo.ft == 'cmp_docs' then return end
+
   -- HACK: del_augroup errors if grp doesn't exist, so just create an empty one
   vim.api.nvim_create_augroup('MulticolumnUpdate', {})
   for _, fwin in pairs(vim.api.nvim_list_wins()) do
