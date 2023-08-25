@@ -284,7 +284,11 @@ M.setup = function(opts)
 
   local start_enabled = false
   if config.start == 'remember' then
-    start_enabled = vim.fn.filereadable(ENABLED_FILE) ~= 0
+    if vim.fn.isdirectory(MULTICOLUMN_DIR) ~= 0 then
+      start_enabled = vim.fn.filereadable(ENABLED_FILE) ~= 0
+    else
+      start_enabled = true
+    end
     vim.api.nvim_create_autocmd('VimLeave', { callback = save_enabled_state })
   else
     start_enabled = (config.start == 'enabled')
