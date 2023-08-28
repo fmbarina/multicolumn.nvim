@@ -4,7 +4,7 @@ local MULTICOLUMN_DIR = vim.fn.stdpath('state') .. '/multicolumn'
 local ENABLED_FILE = MULTICOLUMN_DIR .. '/is-enabled'
 
 local enabled = false
-local first_reload = true
+local first_reload = false
 local bg_color = nil
 local fg_color = nil
 
@@ -240,19 +240,19 @@ end
 
 M.enable = function()
   if enabled then return end
+  enabled = true
+  first_reload = true
 
   reload()
   vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
     group = vim.api.nvim_create_augroup('MulticolumnReload', {}),
     callback = reload,
   })
-
-  first_reload = true
-  enabled = true
 end
 
 M.disable = function()
   if not enabled then return end
+  enabled = false
 
   vim.api.nvim_del_augroup_by_name('MulticolumnReload')
   vim.api.nvim_del_augroup_by_name('MulticolumnUpdate')
@@ -266,8 +266,6 @@ M.disable = function()
     vim.fn.clearmatches(win)
     vim.wo[win].colorcolumn = nil
   end
-
-  enabled = false
 end
 
 M.toggle = function()
