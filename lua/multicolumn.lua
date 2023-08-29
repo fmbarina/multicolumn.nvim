@@ -4,7 +4,7 @@ local MULTICOLUMN_DIR = vim.fn.stdpath('state') .. '/multicolumn'
 local ENABLED_FILE = MULTICOLUMN_DIR .. '/is-enabled'
 
 local enabled = false
-local first_reload = false
+local got_highlight = false
 local bg_color = nil
 local fg_color = nil
 
@@ -134,10 +134,12 @@ local function update(buf, win)
     return true -- DYK returning true in an autocmd callback deletes it?
   end
 
-  vim.api.nvim_set_hl(0, 'ColorColumn', {
-    bg = ruleset.bg_color or bg_color or '',
-    fg = ruleset.fg_color or fg_color or '',
-  })
+  if got_highlight then
+    vim.api.nvim_set_hl(0, 'ColorColumn', {
+      bg = ruleset.bg_color or bg_color or '',
+      fg = ruleset.fg_color or fg_color or '',
+    })
+  end
 
   if ruleset.full_column or ruleset.always_on then
     update_colorcolumn(ruleset, buf, win)
@@ -172,14 +174,6 @@ local function reload()
   end
 
   if buffer_disabled(win) then return end
-
-  -- If get_hl_value is called in enable() the right ColorColumn hl may not be
-  -- set during setup (ex: due to a theme plugin). Here, that's less likely
-  if first_reload then
-    bg_color = get_hl_value('ColorColumn', 'bg')
-    fg_color = get_hl_value('ColorColumn', 'fg')
-    first_reload = false
-  end
 
   vim.api.nvim_create_autocmd(
     { 'CursorMoved', 'CursorMovedI', 'WinScrolled' },
@@ -241,7 +235,13 @@ end
 M.enable = function()
   if enabled then return end
   enabled = true
-  first_reload = true
+
+  -- Give theme plugins some time to set the default highlight
+  vim.defer_fn(function()
+    bg_color = get_hl_value('ColorColumn', 'bg')
+    fg_color = get_hl_value('ColorColumn', 'fg')
+    got_highlight = true
+  end, 100)
 
   reload()
   vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
