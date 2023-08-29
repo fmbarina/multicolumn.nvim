@@ -7,6 +7,7 @@ local enabled = false
 local got_highlight = false
 local bg_color = nil
 local fg_color = nil
+local timer = nil
 
 local config = {
   start = 'enabled', -- enabled, disabled, remember
@@ -25,6 +26,7 @@ local config = {
     },
   },
   max_lines = 6000, -- 0 (disabled) OR int
+  update = 'on_move', -- on_move, lazy_hold, int
   use_default_set = true,
   exclude_floating = true,
   exclude_ft = { 'markdown', 'help', 'netrw' },
@@ -176,6 +178,10 @@ local function reload()
   -- HACK: del_augroup and clear_autocmds will error(?) if group or
   -- autocmd don't exist, respectively, so just create an empty one
   vim.api.nvim_create_augroup('MulticolumnUpdate', {})
+  if timer then
+    if not timer:is_closing() then timer:close() end
+    timer = nil
+  end
 
   clear_all()
 
@@ -190,18 +196,44 @@ local function reload()
 
   if buffer_disabled(win) then return end
 
-  vim.api.nvim_create_autocmd(
-    { 'CursorMoved', 'CursorMovedI', 'WinScrolled' },
-    {
+  if type(config.update) == 'string' then
+    local events = nil
+    if config.update == 'lazy_hold' then
+      events = { 'CursorHold', 'CursorHoldI' }
+    elseif config.update == 'on_move' then
+      events = { 'CursorMoved', 'CursorMovedI', 'WinScrolled' }
+    else
+      return true -- Should be impossible with build_config checking
+    end
+
+    vim.api.nvim_create_autocmd(events, {
       group = vim.api.nvim_create_augroup('MulticolumnUpdate', {}),
       buffer = buf,
       callback = function()
         return update(buf, win)
       end,
-    }
-  )
+    })
 
-  update(buf, win)
+    update(buf, win)
+  elseif type(config.update) == 'number' then
+    if timer then return end
+
+    timer = vim.loop.new_timer()
+    if timer == nil then
+      print('multicolumn.nvim: failed to start timer')
+      return true
+    end
+
+    timer:start(
+      0,
+      config.update,
+      vim.schedule_wrap(function()
+        update(buf, win)
+      end)
+    )
+  else
+    return true -- again, shouldn't happen with build_config checking
+  end
 end
 
 local function fix_set(set)
@@ -221,12 +253,29 @@ end
 
 local function build_config(opts)
   local cfg = vim.tbl_deep_extend('force', config, opts)
+
+  local update_t = type(cfg.update)
+  if not vim.tbl_contains({ 'string', 'number' }, update_t) then
+    print('multicolumn.nvim: not a valid update type: ' .. update_t)
+    return false, {}
+  end
+
+  local update_strs = { 'on_move', 'lazy_hold' }
+  if update_t == 'string' and not vim.tbl_contains(update_strs, cfg.update) then
+    print('multicolumn.nvim: not a valid update option: ' .. cfg.update)
+    return false, {}
+  elseif cfg.update == 0 then
+    print('multicolumn.nvim: cannot be set to update every 0ms!')
+    return false, {}
+  end
+
   for k, _ in pairs(cfg.sets) do
     if not (type(cfg.sets[k]) == 'function') then
       cfg.sets[k] = fix_set(vim.tbl_extend('keep', cfg.sets[k], cfg.base_set))
     end
   end
-  return cfg
+
+  return true, cfg
 end
 
 local function save_enabled_state()
@@ -289,7 +338,13 @@ M.toggle = function()
 end
 
 M.setup = function(opts)
-  config = build_config(opts or {})
+  local ok, cfg = build_config(opts or {})
+
+  if ok then
+    config = cfg
+  else
+    return
+  end
 
   local start_enabled = false
   if config.start == 'remember' then

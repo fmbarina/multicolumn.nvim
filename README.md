@@ -18,6 +18,7 @@ A Neovim plugin to (hopefully) satisfy all your colorcolumn needs.
   - ...and all of that configurable per filetype
 - 💾 Start enabled, disabled, or remember state from last time
 - 🔌 Toggle On/Off the entire plugin
+- ⏰️ Refresh colorcolumn when you move, lazily or on timed intervals.
 - 🎈 Exclude floating windows - no more manually excluding lazy, mason, etc.
 - 📄 Exclude specific filetypes
 
@@ -70,9 +71,16 @@ The settings table (`opts`) may define the following fields.
 | **base_set**         | `table`: set, see below                       | Base set all other sets inherit from when options are missing.                                                 |
 | **sets**             | `table[]`: set list, see below                | Defines plugin behavior for each defined `filetype` set. Accepts a `default` set for fallback behavior.        |
 | **max_lines**        | `int`                                         | Maximum lines allowed for `file` scope line scanning. When `0`, there is no limit.                             |
+| **update**           | `string` (`on_move` or `lazy_hold`) or `int`  | Defines when the colorcolumn is updated, defaults to `on_move`. See explanation for options below.             |
 | **use_default_set**  | `bool`                                        | Whether to use the `default` set when no `filetype` set is found, defaults to true.                            |
 | **exclude_floating** | `bool`                                        | Whether the plugin should be disabled in floating windows, such as mason.nvim and lazy.nvim.                   |
 | **exclude_ft**       | `string[]`                                    | List of filetypes (strings) the plugin should be disabled under.                                               |
+
+You can choose when to update the colorcolumn with the value of the `update` setting:
+
+- `on_move`: update colorcolumn everytime the cursor moves or window scrolls.
+- `lazy_hold`: update colorcolumn when you stop moving for a while. Slower feedback, lighter performance impact.
+- If the value is an `int`, update colorcolumn in timed intervals spaced by this value in miliseconds.
 
 ### Sets
 
