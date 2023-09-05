@@ -156,7 +156,8 @@ local function reload()
   local buf = vim.api.nvim_get_current_buf()
   local win = vim.api.nvim_get_current_win()
 
-  -- HACK: del_augroup errors if grp doesn't exist, so just create an empty one
+  -- HACK: del_augroup and clear_autocmds will error(?) if group or
+  -- autocmd don't exist, respectively, so just create an empty one
   vim.api.nvim_create_augroup('MulticolumnUpdate', {})
   for _, fwin in pairs(vim.api.nvim_list_wins()) do
     clear_colorcolum(fwin)
