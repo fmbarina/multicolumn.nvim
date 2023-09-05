@@ -166,7 +166,7 @@ local function reload()
 
   -- HACK: ft might not be set fast enough? unsure, but force reloading fixes it
   if vim.bo.filetype == '' then
-    vim.api.nvim_create_autocmd('CursorMoved', {
+    vim.api.nvim_create_autocmd('Filetype', {
       group = vim.api.nvim_create_augroup('MulticolumnHackReload', {}),
       callback = reload,
       once = true,
