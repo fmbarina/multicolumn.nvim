@@ -56,19 +56,21 @@ local function get_exceeded(ruleset, buf, win)
   local lines = nil
 
   if ruleset.scope == 'file' then
-    lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true)
+    lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
   elseif ruleset.scope == 'window' then
     local first = vim.fn.line('w0', win)
     local last = vim.fn.line('w$', win)
-    lines = vim.api.nvim_buf_get_lines(buf, first - 1, last, true)
+    lines = vim.api.nvim_buf_get_lines(buf, first - 1, last, false)
   else -- config.cope == 'line'
     local cur_line = vim.fn.line('.', win)
-    lines = vim.api.nvim_buf_get_lines(buf, cur_line - 1, cur_line, true)
+    lines = vim.api.nvim_buf_get_lines(buf, cur_line - 1, cur_line, false)
   end
 
   local col = vim.fn.min(ruleset.rulers)
   for _, line in pairs(lines) do
-    if col <= vim.fn.strdisplaywidth(line) then return true end
+    local ok, cells = pcall(vim.fn.strdisplaywidth, line)
+    if not ok then return false end
+    if col <= cells then return true end
   end
 
   return false
