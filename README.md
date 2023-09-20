@@ -129,6 +129,8 @@ sets = {
   },
 },
 line_limit = 6000,
+update = 'on_move',
+use_default_set = true,
 exclude_floating = true,
 exclude_ft = { 'markdown', 'help', 'netrw' },
 ```
