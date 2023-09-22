@@ -1,13 +1,32 @@
 local config = require('multicolumn.config')
-local util = require('multicolumn.util')
 
 local timer = nil
 
 local M = {}
 
+function M.get_hl_value(group, attr)
+  return vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID(group)), attr .. '#')
+end
+
+function M.clear_all()
+  for _, win in pairs(vim.api.nvim_list_wins()) do
+    if vim.wo[win].colorcolumn then vim.wo[win].colorcolumn = nil end
+    vim.fn.clearmatches(win)
+  end
+  for _, buf in pairs(vim.api.nvim_list_bufs()) do
+    vim.b[buf].prev_state = nil
+  end
+end
+
+local function is_floating(win)
+  local cfg = vim.api.nvim_win_get_config(win)
+  if cfg.relative > '' or cfg.external then return true end
+  return false
+end
+
 local function buffer_disabled(win)
   if config.opts.use_default_set then
-    if config.opts.exclude_floating and util.is_floating(win) then
+    if config.opts.exclude_floating and is_floating(win) then
       return true
     elseif vim.tbl_contains(config.opts.exclude_ft, vim.bo.filetype) then
       return true
@@ -132,7 +151,7 @@ function M.reload()
     timer = nil
   end
 
-  util.clear_all()
+  M.clear_all()
 
   -- HACK: ft might not be set fast enough? unsure, but force reloading fixes it
   if vim.bo.filetype == '' then

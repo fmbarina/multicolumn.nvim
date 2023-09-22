@@ -1,6 +1,5 @@
+local column = require('multicolumn.column')
 local config = require('multicolumn.config')
-local reload = require('multicolumn.column').reload
-local util = require('multicolumn.util')
 
 local MULTICOLUMN_DIR = vim.fn.stdpath('state') .. '/multicolumn'
 local ENABLED_FILE = MULTICOLUMN_DIR .. '/is-enabled'
@@ -33,15 +32,15 @@ M.enable = function()
 
   -- Give theme plugins some time to set the default highlight
   vim.defer_fn(function()
-    config.default_bg_color = util.get_hl_value('ColorColumn', 'bg')
-    config.default_fg_color = util.get_hl_value('ColorColumn', 'fg')
+    config.default_bg_color = column.get_hl_value('ColorColumn', 'bg')
+    config.default_fg_color = column.get_hl_value('ColorColumn', 'fg')
     config.got_hl = true
   end, 100)
 
-  reload()
+  column.reload()
   vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
     group = vim.api.nvim_create_augroup('MulticolumnReload', {}),
-    callback = reload,
+    callback = column.reload,
   })
 end
 
@@ -57,7 +56,7 @@ M.disable = function()
     fg = config.default_fg_color,
   })
 
-  util.clear_all()
+  column.clear_all()
 end
 
 M.toggle = function()
