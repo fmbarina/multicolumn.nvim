@@ -40,7 +40,7 @@ function M.fix_set(set)
   return set
 end
 
-function M.setup(opts)
+function M.build(opts)
   local cfg = vim.tbl_deep_extend('force', defaults, opts)
 
   local update_t = type(cfg.update)

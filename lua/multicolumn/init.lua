@@ -69,7 +69,7 @@ M.toggle = function()
 end
 
 M.setup = function(opts)
-  local ok = config.setup(opts or {})
+  local ok = config.build(opts or {})
 
   if not ok then return end
 
