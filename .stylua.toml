@@ -6,3 +6,5 @@ quote_style = "AutoPreferSingle"
 call_parentheses = "Always"
 collapse_simple_statement = "ConditionalOnly"
 
+[sort_requires]
+enabled = true
