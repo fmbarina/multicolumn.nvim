@@ -87,9 +87,15 @@ M.setup = function(opts)
 
   if start_enabled then M.enable() end
 
-  vim.api.nvim_create_user_command('MulticolumnEnable', M.enable, {})
-  vim.api.nvim_create_user_command('MulticolumnDisable', M.disable, {})
-  vim.api.nvim_create_user_command('MulticolumnToggle', M.toggle, {})
+  vim.api.nvim_create_user_command('MulticolumnEnable', M.enable, {
+    desc = 'Enable colorcolumn',
+  })
+  vim.api.nvim_create_user_command('MulticolumnDisable', M.disable, {
+    desc = 'Disable colorcolumn',
+  })
+  vim.api.nvim_create_user_command('MulticolumnToggle', M.toggle, {
+    desc = 'Toggle on/off colorcolumn',
+  })
 end
 
 return M
