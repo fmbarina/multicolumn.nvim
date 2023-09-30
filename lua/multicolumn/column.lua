@@ -14,7 +14,8 @@ function M.clear_all()
     vim.fn.clearmatches(win)
   end
   for _, buf in pairs(vim.api.nvim_list_bufs()) do
-    vim.b[buf].prev_state = nil
+    vim.b[buf].multicolumn_prev_state = nil
+    vim.b[buf].multicolumn_prev_rulers = nil
   end
 end
 
@@ -65,9 +66,15 @@ local function update_colorcolumn(ruleset, buf, win)
   local state = ruleset.always_on or get_exceeded(ruleset, buf, win)
   local rulers = table.concat(ruleset.rulers, ',')
 
-  if (state ~= vim.b.prev_state) or (rulers ~= vim.b.prev_rulers) then
-    vim.b.prev_state = state
-    vim.b.prev_rulers = rulers
+  if
+    (state ~= vim.b.multicolumn_prev_state)
+    or (rulers ~= vim.b.multicolumn_prev_rulers)
+  then
+    -- Maybe should switch to an internal data structure?
+    ---@diagnostic disable: inject-field
+    vim.b.multicolumn_prev_state = state
+    vim.b.multicolumn_prev_rulers = rulers
+    ---@diagnostic enable: inject-field
 
     if state then
       vim.wo[win].colorcolumn = rulers
