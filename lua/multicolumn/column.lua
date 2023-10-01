@@ -25,7 +25,7 @@ local function is_floating(win)
   return false
 end
 
-local function buffer_disabled(win)
+local function is_disabled(win)
   if config.opts.use_default_set then
     if config.opts.exclude_floating and is_floating(win) then
       return true
@@ -84,7 +84,9 @@ local function update_colorcolumn(ruleset, buf, win)
   end
 end
 
-local function update_matches(ruleset)
+-- NOTE: would be interesting to scope matches to buffer (passed as 'buf' arg,
+-- as in update_colorcolumn), if that feature is ever implemented in [neo]vim
+local function update_matches(ruleset, win)
   vim.fn.clearmatches()
 
   local line_prefix = ''
@@ -92,19 +94,21 @@ local function update_matches(ruleset)
     line_prefix = '\\%' .. vim.fn.line('.') .. 'l'
   end
 
+  local function add_match(pattern)
+    vim.fn.matchadd('ColorColumn', pattern, nil, -1, { window = win })
+  end
+
   if ruleset.to_line_end then
-    vim.fn.matchadd(
-      'ColorColumn',
-      line_prefix .. '\\%' .. vim.fn.min(ruleset.rulers) .. 'v[^\n].*$'
-    )
+    add_match(line_prefix .. '\\%' .. vim.fn.min(ruleset.rulers) .. 'v[^\n].*$')
   else
     for _, v in pairs(ruleset.rulers) do
-      vim.fn.matchadd('ColorColumn', line_prefix .. '\\%' .. v .. 'v[^\n]')
+      add_match(line_prefix .. '\\%' .. v .. 'v[^\n]')
     end
   end
 end
 
-function M.update(buf, win)
+function M.update(win)
+  local buf = vim.api.nvim_win_get_buf(win)
   local ruleset = {}
 
   if type(config.opts.sets[vim.bo.filetype]) == 'function' then
@@ -142,35 +146,11 @@ function M.update(buf, win)
   end
 
   if (not ruleset.full_column) or ruleset.to_line_end then
-    update_matches(ruleset)
+    update_matches(ruleset, win)
   end
 end
 
-function M.reload()
-  local buf = vim.api.nvim_get_current_buf()
-  local win = vim.api.nvim_get_current_win()
-
-  -- HACK: del_augroup and clear_autocmds will error(?) if group or
-  -- autocmd don't exist, respectively, so just create an empty one
-  vim.api.nvim_create_augroup('MulticolumnUpdate', {})
-  if timer then
-    if not timer:is_closing() then timer:close() end
-    timer = nil
-  end
-
-  M.clear_all()
-
-  -- HACK: ft might not be set fast enough? unsure, but force reloading fixes it
-  if vim.bo.filetype == '' then
-    vim.api.nvim_create_autocmd('Filetype', {
-      group = vim.api.nvim_create_augroup('MulticolumnHackReload', {}),
-      callback = M.reload,
-      once = true,
-    })
-  end
-
-  if buffer_disabled(win) then return end
-
+local function create_update_aucmds(win)
   if type(config.opts.update) == 'string' then
     local events = nil
     if config.opts.update == 'lazy_hold' then
@@ -183,13 +163,11 @@ function M.reload()
 
     vim.api.nvim_create_autocmd(events, {
       group = vim.api.nvim_create_augroup('MulticolumnUpdate', {}),
-      buffer = buf,
       callback = function()
-        return M.update(buf, win)
+        return M.update(win)
       end,
     })
-
-    M.update(buf, win)
+    return M.update(win)
   elseif type(config.opts.update) == 'number' then
     if timer then return end
 
@@ -203,12 +181,35 @@ function M.reload()
       0,
       config.opts.update,
       vim.schedule_wrap(function()
-        M.update(buf, win)
+        M.update(win)
       end)
     )
   else
     return true -- again, shouldn't happen with setup checking
   end
+end
+
+function M.reload()
+  -- HACK: del_augroup and clear_autocmds will error(?) if group or
+  -- autocmd don't exist, respectively, so just create an empty one
+  vim.api.nvim_create_augroup('MulticolumnUpdate', {})
+
+  if timer then
+    if not timer:is_closing() then timer:close() end
+    timer = nil
+  end
+
+  M.clear_all()
+
+  -- NOTE: I tried all I know to obviate the need for this code, but AFAIK there
+  -- is no pretty & reliable way to run a callback on window switching only when
+  -- it is certain that, if a filetype was to be set, it will have been already.
+  -- This may be revisited in a future release, but for now it'll do.
+  vim.defer_fn(function()
+    local win = vim.api.nvim_get_current_win()
+    if is_disabled(win) then return end
+    return create_update_aucmds(win)
+  end, 50)
 end
 
 return M

@@ -38,7 +38,7 @@ M.enable = function()
   end, 100)
 
   column.reload()
-  vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
+  vim.api.nvim_create_autocmd({ 'WinEnter' }, {
     group = vim.api.nvim_create_augroup('MulticolumnReload', {}),
     callback = column.reload,
   })
