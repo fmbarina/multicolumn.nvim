@@ -41,7 +41,7 @@ function M.fix_set(set)
 end
 
 function M.build(opts)
-  local cfg = vim.tbl_deep_extend('force', defaults, opts)
+  local cfg = vim.tbl_deep_extend('force', {}, defaults, opts or {})
 
   local update_t = type(cfg.update)
   if not vim.tbl_contains({ 'string', 'number' }, update_t) then
@@ -53,8 +53,11 @@ function M.build(opts)
   if update_t == 'string' and not vim.tbl_contains(update_strs, cfg.update) then
     print('multicolumn.nvim: not a valid update option: ' .. cfg.update)
     return false
-  elseif cfg.update == 0 then
-    print('multicolumn.nvim: cannot be set to update every 0ms!')
+  elseif update_t == 'number' and cfg.update <= 0 then
+    print(
+      'multicolumn.nvim: invalid update timing (must be positive): '
+        .. cfg.update
+    )
     return false
   end
 
