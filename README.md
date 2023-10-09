@@ -36,6 +36,7 @@ For the "I know what I'm doing" users:
   ```lua
   {
       'fmbarina/multicolumn.nvim',
+      event = { 'BufReadPre', 'BufNewFile' },
       opts = {},
   }
   ```
