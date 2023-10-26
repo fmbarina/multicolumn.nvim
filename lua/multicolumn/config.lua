@@ -2,6 +2,11 @@ local M = {}
 
 local defaults = {
   start = 'enabled', -- enabled, disabled, remember
+  update = 'on_move', -- on_move, lazy_hold, int
+  max_lines = 6000, -- 0 (disabled) OR int
+  use_default_set = true,
+  exclude_floating = true,
+  exclude_ft = { 'markdown', 'help', 'netrw' },
   base_set = {
     scope = 'window', -- file, window, line
     rulers = {}, -- { int, int, ... }
@@ -16,11 +21,6 @@ local defaults = {
       rulers = { 81 },
     },
   },
-  max_lines = 6000, -- 0 (disabled) OR int
-  update = 'on_move', -- on_move, lazy_hold, int
-  use_default_set = true,
-  exclude_floating = true,
-  exclude_ft = { 'markdown', 'help', 'netrw' },
 }
 
 M.opts = {}

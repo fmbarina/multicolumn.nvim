@@ -69,13 +69,13 @@ The settings table (`opts`) may define the following fields.
 | Setting              | Type                                          | Description                                                                                                    |
 |----------------------|-----------------------------------------------|----------------------------------------------------------------------------------------------------------------|
 | **start**            | `string`: `enabled`, `disabled` or `remember` | Plugin start behavior opening neovim. When `remember`, the plugin will persist state through neovim sessions.  |
-| **base_set**         | `table`: set, see below                       | Base set all other sets inherit from when options are missing.                                                 |
-| **sets**             | `table[]`: set list, see below                | Defines plugin behavior for each defined `filetype` set. Accepts a `default` set for fallback behavior.        |
-| **max_lines**        | `int`                                         | Maximum lines allowed for `file` scope line scanning. When `0`, there is no limit.                             |
 | **update**           | `string` (`on_move` or `lazy_hold`) or `int`  | Defines when the colorcolumn is updated, defaults to `on_move`. See explanation for options below.             |
+| **max_lines**        | `int`                                         | Maximum lines allowed for `file` scope line scanning. When `0`, there is no limit.                             |
 | **use_default_set**  | `bool`                                        | Whether to use the `default` set when no `filetype` set is found, defaults to true.                            |
 | **exclude_floating** | `bool`                                        | Whether the plugin should be disabled in floating windows, such as mason.nvim and lazy.nvim.                   |
 | **exclude_ft**       | `string[]`                                    | List of filetypes (strings) the plugin should be disabled under.                                               |
+| **base_set**         | `table`: set, see below                       | Base set all other sets inherit from when options are missing.                                                 |
+| **sets**             | `table[]`: set list, see below                | Defines plugin behavior for each defined `filetype` set. Accepts a `default` set for fallback behavior.        |
 
 You can choose when to update the colorcolumn with the value of the `update` setting:
 
@@ -114,10 +114,15 @@ Note that some options are related and may override your configuration, but this
 `multicolumn.nvim` comes with the following defaults:
 
 ```lua
-start = 'enabled',
+start = 'enabled', -- enabled, disabled, remember
+update = 'on_move', -- on_move, lazy_hold, int
+max_lines = 6000, -- 0 (disabled) OR int
+use_default_set = true,
+exclude_floating = true,
+exclude_ft = { 'markdown', 'help', 'netrw' },
 base_set = {
-  scope = 'window',
-  rulers = {},
+  scope = 'window', -- file, window, line
+  rulers = {}, -- { int, int, ... }
   to_line_end = false,
   full_column = false,
   always_on = false,
@@ -129,11 +134,6 @@ sets = {
     rulers = { 81 },
   },
 },
-line_limit = 6000,
-update = 'on_move',
-use_default_set = true,
-exclude_floating = true,
-exclude_ft = { 'markdown', 'help', 'netrw' },
 ```
 
 ### Banner settings
