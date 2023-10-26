@@ -70,6 +70,7 @@ The settings table (`opts`) may define the following fields.
 |----------------------|-----------------------------------------------|----------------------------------------------------------------------------------------------------------------|
 | **start**            | `string`: `enabled`, `disabled` or `remember` | Plugin start behavior opening neovim. When `remember`, the plugin will persist state through neovim sessions.  |
 | **update**           | `string` (`on_move` or `lazy_hold`) or `int`  | Defines when the colorcolumn is updated, defaults to `on_move`. See explanation for options below.             |
+| **command**          | `string` `multiple`, `single` or `none`       | Controls how many commands are created for the plugin.                                                         |
 | **max_lines**        | `int`                                         | Maximum lines allowed for `file` scope line scanning. When `0`, there is no limit.                             |
 | **use_default_set**  | `bool`                                        | Whether to use the `default` set when no `filetype` set is found, defaults to true.                            |
 | **exclude_floating** | `bool`                                        | Whether the plugin should be disabled in floating windows, such as mason.nvim and lazy.nvim.                   |
@@ -116,6 +117,7 @@ Note that some options are related and may override your configuration, but this
 ```lua
 start = 'enabled', -- enabled, disabled, remember
 update = 'on_move', -- on_move, lazy_hold, int
+command = 'multiple', -- multiple, single, none
 max_lines = 6000, -- 0 (disabled) OR int
 use_default_set = true,
 exclude_floating = true,

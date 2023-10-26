@@ -3,6 +3,7 @@ local M = {}
 local defaults = {
   start = 'enabled', -- enabled, disabled, remember
   update = 'on_move', -- on_move, lazy_hold, int
+  command = 'multiple', -- multiple, single, none
   max_lines = 6000, -- 0 (disabled) OR int
   use_default_set = true,
   exclude_floating = true,

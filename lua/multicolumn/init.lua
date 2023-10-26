@@ -67,6 +67,40 @@ M.toggle = function()
   end
 end
 
+local function command_create()
+  if config.opts.command == 'multiple' then
+    vim.api.nvim_create_user_command('MulticolumnEnable', M.enable, {
+      desc = 'Enable colorcolumn',
+    })
+    vim.api.nvim_create_user_command('MulticolumnDisable', M.disable, {
+      desc = 'Disable colorcolumn',
+    })
+    vim.api.nvim_create_user_command('MulticolumnToggle', M.toggle, {
+      desc = 'Toggle on/off colorcolumn',
+    })
+  elseif config.opts.command == 'single' then
+    vim.api.nvim_create_user_command('Multicolumn', function(cmd)
+      if #cmd.args == 0 then
+        M.toggle()
+      else
+        M[cmd.args]()
+      end
+    end, {
+      desc = 'Colorcolumn plugin commands',
+      nargs = '?',
+      complete = function(lead)
+        return vim.tbl_filter(function(key)
+          return string.find(key, lead, 1, true) == 1
+        end, {
+          'toggle',
+          'enable',
+          'disable',
+        })
+      end,
+    })
+  end
+end
+
 M.setup = function(opts)
   local ok = config.build(opts or {})
 
@@ -86,15 +120,7 @@ M.setup = function(opts)
 
   if start_enabled then M.enable() end
 
-  vim.api.nvim_create_user_command('MulticolumnEnable', M.enable, {
-    desc = 'Enable colorcolumn',
-  })
-  vim.api.nvim_create_user_command('MulticolumnDisable', M.disable, {
-    desc = 'Disable colorcolumn',
-  })
-  vim.api.nvim_create_user_command('MulticolumnToggle', M.toggle, {
-    desc = 'Toggle on/off colorcolumn',
-  })
+  command_create()
 end
 
 return M
