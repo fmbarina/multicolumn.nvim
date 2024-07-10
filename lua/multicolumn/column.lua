@@ -173,7 +173,10 @@ local function create_update_aucmds(win)
 
     timer = vim.loop.new_timer()
     if timer == nil then
-      print('multicolumn.nvim: failed to start timer')
+      vim.notify_once(
+        'multicolumn.nvim: failed to start timer',
+        vim.log.levels.ERROR
+      )
       return true
     end
 

@@ -46,18 +46,25 @@ function M.build(opts)
 
   local update_t = type(cfg.update)
   if not vim.tbl_contains({ 'string', 'number' }, update_t) then
-    print('multicolumn.nvim: not a valid update type: ' .. update_t)
+    vim.notify(
+      'multicolumn.nvim: not a valid update type: ' .. update_t,
+      vim.log.levels.ERROR
+    )
     return false
   end
 
   local update_strs = { 'on_move', 'lazy_hold' }
   if update_t == 'string' and not vim.tbl_contains(update_strs, cfg.update) then
-    print('multicolumn.nvim: not a valid update option: ' .. cfg.update)
+    vim.notify(
+      'multicolumn.nvim: not a valid update option: ' .. cfg.update,
+      vim.log.levels.ERROR
+    )
     return false
   elseif update_t == 'number' and cfg.update <= 0 then
-    print(
+    vim.notify(
       'multicolumn.nvim: invalid update timing (must be positive): '
-        .. cfg.update
+        .. cfg.update,
+      vim.log.levels.ERROR
     )
     return false
   end
