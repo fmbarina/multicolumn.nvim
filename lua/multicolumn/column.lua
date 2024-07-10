@@ -10,7 +10,7 @@ end
 
 function M.clear_all()
   for _, win in pairs(vim.api.nvim_list_wins()) do
-    if vim.wo[win].colorcolumn then vim.wo[win].colorcolumn = nil end
+    if vim.wo[win].colorcolumn then vim.wo[win].colorcolumn = '' end
     vim.fn.clearmatches(win)
   end
   for _, buf in pairs(vim.api.nvim_list_bufs()) do
@@ -79,7 +79,7 @@ local function update_colorcolumn(ruleset, buf, win)
     if state then
       vim.wo[win].colorcolumn = rulers
     else
-      vim.wo[win].colorcolumn = nil
+      vim.wo[win].colorcolumn = ''
     end
   end
 end
