@@ -5,6 +5,7 @@ local defaults = {
   update = 'on_move', -- on_move, lazy_hold, int
   command = 'multiple', -- multiple, single, none
   max_lines = 6000, -- 0 (disabled) OR int
+  max_size = 64 * 1024 * 1024, -- 0 (disabled) OR int
   use_default_set = true,
   exclude_floating = true,
   exclude_ft = { 'markdown', 'help', 'netrw' },

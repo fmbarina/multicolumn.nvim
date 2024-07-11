@@ -127,9 +127,15 @@ function M.update(win)
   end
 
   if
-    ruleset.scope == 'file'
-    and (config.opts.max_lines ~= 0)
-    and (vim.api.nvim_buf_line_count(buf) > config.opts.max_lines)
+    (
+      config.opts.max_size ~= 0
+      and (vim.fn.getfsize(vim.fn.expand('%')) > config.opts.max_size)
+    )
+    or (
+      ruleset.scope == 'file'
+      and (config.opts.max_lines ~= 0)
+      and (vim.api.nvim_buf_line_count(buf) > config.opts.max_lines)
+    )
   then
     return true -- DYK returning true in an autocmd callback deletes it?
   end
