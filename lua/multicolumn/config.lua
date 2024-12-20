@@ -9,6 +9,7 @@ local defaults = {
   use_default_set = true,
   exclude_floating = true,
   exclude_ft = { 'markdown', 'help', 'netrw' },
+  editorconfig = false,
   base_set = {
     scope = 'window', -- file, window, line
     rulers = {}, -- { int, int, ... }

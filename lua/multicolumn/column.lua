@@ -38,6 +38,18 @@ local function is_disabled(win)
   return false
 end
 
+-- Inspired by work of loicreynier in smartcolumn.nvim PR and the main smartcolumn.nvim
+local function colorcolumn_editorconfig(rulers)
+  local editorconfig_max_line_length = vim.b[0].editorconfig
+      and vim.b[0].editorconfig.max_line_length ~= 'off'
+      and vim.b[0].editorconfig.max_line_length
+    or 'null'
+
+  if editorconfig_max_line_length == 'null' then return rulers end
+
+  return { tonumber(editorconfig_max_line_length) }
+end
+
 local function get_exceeded(ruleset, buf, win)
   local lines = nil
 
@@ -145,6 +157,10 @@ function M.update(win)
       bg = ruleset.bg_color or config.default_bg_color or '',
       fg = ruleset.fg_color or config.default_fg_color or '',
     })
+  end
+
+  if config.opts.editorconfig then
+    ruleset.rulers = colorcolumn_editorconfig(ruleset.rulers)
   end
 
   if ruleset.full_column or ruleset.always_on then
