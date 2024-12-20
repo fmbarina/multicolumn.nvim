@@ -47,7 +47,7 @@ local function colorcolumn_editorconfig(rulers)
 
   if editorconfig_max_line_length == 'null' then return rulers end
 
-  return { tonumber(editorconfig_max_line_length) }
+  return { tonumber(editorconfig_max_line_length) + 1 }
 end
 
 local function get_exceeded(ruleset, buf, win)
