@@ -40,14 +40,14 @@ end
 
 -- Inspired by work of loicreynier in smartcolumn.nvim PR and the main smartcolumn.nvim
 local function colorcolumn_editorconfig(rulers)
-  local editorconfig_max_line_length = vim.b[0].editorconfig
-      and vim.b[0].editorconfig.max_line_length ~= 'off'
-      and vim.b[0].editorconfig.max_line_length
-    or 'null'
-
-  if editorconfig_max_line_length == 'null' then return rulers end
-
-  return { tonumber(editorconfig_max_line_length) + 1 }
+  local max_line_length = vim.b.editorconfig
+      and vim.b.editorconfig.max_line_length ~= 'off'
+      and vim.b.editorconfig.max_line_length ~= 'unset'
+      and vim.b.editorconfig.max_line_length
+    
+  if max_line_length then
+    return { tonumber(max_line_length) + 1 }
+  end
 end
 
 local function get_exceeded(ruleset, buf, win)
@@ -160,7 +160,7 @@ function M.update(win)
   end
 
   if config.opts.editorconfig then
-    ruleset.rulers = colorcolumn_editorconfig(ruleset.rulers)
+    ruleset.rulers = colorcolumn_editorconfig() or ruleset.rulers
   end
 
   if ruleset.full_column or ruleset.always_on then
