@@ -76,6 +76,7 @@ The settings table (`opts`) may define the following fields.
 | **use_default_set**  | `bool`                                        | Whether to use the `default` set when no `filetype` set is found, defaults to true.                            |
 | **exclude_floating** | `bool`                                        | Whether the plugin should be disabled in floating windows, such as mason.nvim and lazy.nvim.                   |
 | **exclude_ft**       | `string[]`                                    | List of filetypes (strings) the plugin should be disabled under.                                               |
+| **editorconfig**     | `bool`                                        | Whether to use the max_line_length value from .editorconfig                                                    |
 | **base_set**         | `table`: set, see below                       | Base set all other sets inherit from when options are missing.                                                 |
 | **sets**             | `table[]`: set list, see below                | Defines plugin behavior for each defined `filetype` set. Accepts a `default` set for fallback behavior.        |
 
@@ -124,6 +125,7 @@ max_size = 64 * 1024 * 1024, -- 0 (disabled) OR int
 use_default_set = true,
 exclude_floating = true,
 exclude_ft = { 'markdown', 'help', 'netrw' },
+editorconfig = false,
 base_set = {
   scope = 'window', -- file, window, line
   rulers = {}, -- { int, int, ... }

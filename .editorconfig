@@ -1,0 +1,7 @@
+root = true
+
+[*.lua]
+max_line_length = 80
+end_of_line = lf
+indent_style = "space"
+indent_size = 2
