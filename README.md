@@ -97,17 +97,16 @@ A `set` defines a _set of options_ governing colorcolumn behavior i.e. it's a ta
 
 These are the options that multicolumn.nvim looks for in a set:
 
-| Option          | Type                                 | Description                                                                                         |
-|-----------------|--------------------------------------|-----------------------------------------------------------------------------------------------------|
-| **scope**       | `string`: `file`, `window` or `line` | Scope that the plugin will scan and generate colorcolumns for                                       |
-| **rulers**      | `int[]`                              | List of integers defining the colorcolumn numbers.                                                  |
-| **to_line_end** | `bool`                               | Whether to highlight characters exceeding the colorcolumn to the end of the line                    |
-| **full_column** | `bool`                               | Whether to draw a full colorcolumn (window ceiling to bottom) when the column number is hit         |
-| **always_on**   | `bool`                               | Whether to always draw the full colorcolumns. When true, implies `full_column` is true as well      |
-| **on_exceeded** | `bool`                               | Whether draw the colorcolumn when line length is exceeded. (eg given a limit of 80, colorcolumn     |
-|                 |                                      | will be drawn when a line reaches column 81 if set to true and column 80 if set to false)           |
-| **bg_color**    | `string`: hex code (e.g. "#c92aaf")  | Background highlight color of the colorcolumn as a hex code                                         |
-| **fg_color**    | `string`: hex code (e.g. "#c92aaf")  | Foreground highlight color of the colorcolumn as a hex code                                         |
+| Option          | Type                                 | Description                                                                                                                                                                                 |
+|-----------------|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **scope**       | `string`: `file`, `window` or `line` | Scope that the plugin will scan and generate colorcolumns for                                                                                                                               |
+| **rulers**      | `int[]`                              | List of integers defining the colorcolumn numbers.                                                                                                                                          |
+| **to_line_end** | `bool`                               | Whether to highlight characters exceeding the colorcolumn to the end of the line                                                                                                            |
+| **full_column** | `bool`                               | Whether to draw a full colorcolumn (window ceiling to bottom) when the column number is hit                                                                                                 |
+| **always_on**   | `bool`                               | Whether to always draw the full colorcolumns. When true, implies `full_column` is true as well                                                                                              |
+| **on_exceeded** | `bool`                               | Whether draw the colorcolumn when line length is exceeded. (e.g. given a limit of 80, colorcolumn will be drawn when a line reaches column 81 if set to true and column 80 if set to false) |
+| **bg_color**    | `string`: hex code (e.g. "#c92aaf")  | Background highlight color of the colorcolumn as a hex code                                                                                                                                 |
+| **fg_color**    | `string`: hex code (e.g. "#c92aaf")  | Foreground highlight color of the colorcolumn as a hex code                                                                                                                                 |
 
 Note that some options are related and may override your configuration, but this *should* only happen in ways you'd expect (and hopefully want):
 
