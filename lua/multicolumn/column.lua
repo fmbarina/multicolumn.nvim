@@ -166,12 +166,11 @@ function M.update(win)
 
   if ruleset.on_exceeded then
     for i, v in ipairs(ruleset.rulers) do
-      print(v)
       ruleset.rulers[i] = v + 1
     end
   end
 
-  print(ruleset.rulers)
+  print(vim.inspect(ruleset.rulers))
 
   if ruleset.full_column or ruleset.always_on then
     update_colorcolumn(ruleset, buf, win)
