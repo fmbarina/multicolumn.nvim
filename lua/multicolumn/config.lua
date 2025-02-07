@@ -16,13 +16,13 @@ local defaults = {
     to_line_end = false,
     full_column = false,
     always_on = false,
+    on_exceeded = false,
     bg_color = nil,
     fg_color = nil,
   },
   sets = {
     default = {
       rulers = { 81 },
-      on_exceeded = false,
     },
   },
 }
