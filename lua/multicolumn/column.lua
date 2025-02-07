@@ -82,7 +82,7 @@ local function update_colorcolumn(ruleset, buf, win)
   if ruleset.on_exceeded then
     local new_rulers = {}
     for i, v in ipairs(ruleset.rulers) do
-      new_rulers[i] = v
+      new_rulers[i] = v + 1
     end
     rulers = table.concat(new_rulers, ',')
     print(vim.inspect(rulers))
