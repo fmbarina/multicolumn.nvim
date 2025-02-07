@@ -46,7 +46,7 @@ local function get_editorconfig_ruler()
       and vim.b.editorconfig.max_line_length
 
   if max_line_length then
-    return { tonumber(max_line_length) + 1 }
+    return { tonumber(max_line_length) }
   end
 end
 

@@ -22,6 +22,8 @@ local defaults = {
   sets = {
     default = {
       rulers = { 81 },
+      -- rulers = { 80 },
+      -- inclusive = false,
     },
   },
 }
