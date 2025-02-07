@@ -165,11 +165,12 @@ function M.update(win)
   end
 
   if
-    ruleset.on_exceeded and (rulers_changed and not config.opts.editorconfig)
+    ruleset.on_exceeded and (not rulers_changed or config.opts.editorconfig)
   then
     for i, v in ipairs(ruleset.rulers) do
       ruleset.rulers[i] = v + 1
     end
+    rulers_changed = true
     print(vim.inspect(ruleset.rulers))
   end
 
