@@ -2,8 +2,6 @@ local config = require('multicolumn.config')
 
 local timer = nil
 
-local rulers_changed = false
-
 local M = {}
 
 function M.get_hl_value(group, attr)
@@ -66,6 +64,10 @@ local function get_exceeded(ruleset, buf, win)
 
   local col = vim.fn.min(ruleset.rulers)
 
+  if ruleset.on_exceeded then
+    col = col + 1
+  end
+
   for _, line in pairs(lines) do
     local ok, cells = pcall(vim.fn.strdisplaywidth, line)
     if not ok then return false end
@@ -112,9 +114,16 @@ local function update_matches(ruleset, win)
   end
 
   if ruleset.to_line_end then
-    add_match(line_prefix .. '\\%' .. vim.fn.min(ruleset.rulers) .. 'v[^\n].*$')
+    local col = vim.fn.min(ruleset.rulers)
+    if ruleset.on_exceeded then
+      col = col + 1
+    end
+    add_match(line_prefix .. '\\%' .. col .. 'v[^\n].*$')
   else
-    for _, v in pairs(ruleset.rulers) do
+    for _, v in pairs(ruleset.rules) do
+      if ruleset.on_exceeded then
+        v = v + 1
+      end
       add_match(line_prefix .. '\\%' .. v .. 'v[^\n]')
     end
   end
@@ -164,14 +173,7 @@ function M.update(win)
     ruleset.rulers = get_editorconfig_ruler() or ruleset.rulers
   end
 
-  local new_rules = {}
-  if ruleset.on_exceeded then
-    for i, v in ipairs(ruleset.rulers) do
-      new_rules[i] = v + 1
-    end
-    ruleset.rulers = new_rules
-    print(vim.inspect(ruleset.rulers))
-  end
+  print(ruleset.on_exceeded)
 
   if ruleset.full_column or ruleset.always_on then
     update_colorcolumn(ruleset, buf, win)
