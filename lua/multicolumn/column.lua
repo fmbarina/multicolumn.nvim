@@ -66,10 +66,6 @@ local function get_exceeded(ruleset, buf, win)
 
   local col = vim.fn.min(ruleset.rulers)
 
-  if ruleset.on_exceeded then
-    col = col + 1
-  end
-
   for _, line in pairs(lines) do
     local ok, cells = pcall(vim.fn.strdisplaywidth, line)
     if not ok then return false end
@@ -117,13 +113,9 @@ local function update_matches(ruleset, win)
 
   if ruleset.to_line_end then
     local col = vim.fn.min(ruleset.rulers)
-    if ruleset.on_exceeded then
-      col = col + 1
-    end
     add_match(line_prefix .. '\\%' .. col .. 'v[^\n].*$')
   else
     for _, v in pairs(ruleset.rulers) do
-      --- ???
       add_match(line_prefix .. '\\%' .. v .. 'v[^\n]')
     end
   end
@@ -171,6 +163,12 @@ function M.update(win)
 
   if config.opts.editorconfig then
     ruleset.rulers = get_editorconfig_ruler() or ruleset.rulers
+  end
+
+  if ruleset.on_exceeded then
+    for i, v in pairs(ruleset.rulers) do
+      ruleset.rulers[i] = v + 1
+    end
   end
 
   if ruleset.full_column or ruleset.always_on then
