@@ -112,8 +112,7 @@ local function update_matches(ruleset, win)
   end
 
   if ruleset.to_line_end then
-    local col = vim.fn.min(ruleset.rulers)
-    add_match(line_prefix .. '\\%' .. col .. 'v[^\n].*$')
+    add_match(line_prefix .. '\\%' .. vim.fn.min(ruleset.rulers) .. 'v[^\n].*$')
   else
     for _, v in pairs(ruleset.rulers) do
       add_match(line_prefix .. '\\%' .. v .. 'v[^\n]')
@@ -166,10 +165,13 @@ function M.update(win)
   end
 
   if ruleset.on_exceeded then
-    for i, v in pairs(ruleset.rulers) do
+    for i, v in ipairs(ruleset.rulers) do
+      print(v)
       ruleset.rulers[i] = v + 1
     end
   end
+
+  print(ruleset.rulers)
 
   if ruleset.full_column or ruleset.always_on then
     update_colorcolumn(ruleset, buf, win)
