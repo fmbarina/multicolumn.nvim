@@ -2,6 +2,8 @@ local config = require('multicolumn.config')
 
 local timer = nil
 
+local rulers_changed = false
+
 local M = {}
 
 function M.get_hl_value(group, attr)
@@ -41,13 +43,11 @@ end
 -- Inspired by the work of loicreynier in smartcolumn.nvim
 local function get_editorconfig_ruler()
   local max_line_length = vim.b.editorconfig
-      and vim.b.editorconfig.max_line_length ~= 'off'
-      and vim.b.editorconfig.max_line_length ~= 'unset'
-      and vim.b.editorconfig.max_line_length
+    and vim.b.editorconfig.max_line_length ~= 'off'
+    and vim.b.editorconfig.max_line_length ~= 'unset'
+    and vim.b.editorconfig.max_line_length
 
-  if max_line_length then
-    return { tonumber(max_line_length) }
-  end
+  if max_line_length then return { tonumber(max_line_length) } end
 end
 
 local function get_exceeded(ruleset, buf, win)
@@ -164,13 +164,14 @@ function M.update(win)
     ruleset.rulers = get_editorconfig_ruler() or ruleset.rulers
   end
 
-  if ruleset.on_exceeded then
+  if
+    ruleset.on_exceeded and (rulers_changed and not config.opts.editorconfig)
+  then
     for i, v in ipairs(ruleset.rulers) do
       ruleset.rulers[i] = v + 1
     end
+    print(vim.inspect(ruleset.rulers))
   end
-
-  print(vim.inspect(ruleset.rulers))
 
   if ruleset.full_column or ruleset.always_on then
     update_colorcolumn(ruleset, buf, win)
