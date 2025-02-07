@@ -100,10 +100,12 @@ These are the options that multicolumn.nvim looks for in a set:
 | Option          | Type                                 | Description                                                                                         |
 |-----------------|--------------------------------------|-----------------------------------------------------------------------------------------------------|
 | **scope**       | `string`: `file`, `window` or `line` | Scope that the plugin will scan and generate colorcolumns for                                       |
-| **rulers**      | `int[]`                              | List of integers defining the colorcolumn numbers. Remember: if the max line length is 80, use 81   |
+| **rulers**      | `int[]`                              | List of integers defining the colorcolumn numbers.                                                  |
 | **to_line_end** | `bool`                               | Whether to highlight characters exceeding the colorcolumn to the end of the line                    |
 | **full_column** | `bool`                               | Whether to draw a full colorcolumn (window ceiling to bottom) when the column number is hit         |
 | **always_on**   | `bool`                               | Whether to always draw the full colorcolumns. When true, implies `full_column` is true as well      |
+| **on_exceeded** | `bool`                               | Whether draw the colorcolumn when line length is exceeded. (eg given a limit of 80, colorcolumn     |
+|                 |                                      | will be drawn when a line reaches column 81 if set to true and column 80 if set to false)           |
 | **bg_color**    | `string`: hex code (e.g. "#c92aaf")  | Background highlight color of the colorcolumn as a hex code                                         |
 | **fg_color**    | `string`: hex code (e.g. "#c92aaf")  | Foreground highlight color of the colorcolumn as a hex code                                         |
 
@@ -138,6 +140,7 @@ base_set = {
 sets = {
   default = {
     rulers = { 81 },
+    on_exceeded = false,
   },
 },
 ```
