@@ -165,7 +165,16 @@ function M.update(win)
   end
 
   if
-    ruleset.on_exceeded and (not rulers_changed or config.opts.editorconfig)
+    ruleset.on_exceeded
+    and (
+      not rulers_changed
+      or (
+        vim.b.editorconfig
+        and vim.b.editorconfig.max_line_length ~= 'off'
+        and vim.b.editorconfig.max_line_length ~= 'unset'
+        and vim.b.editorconfig.max_line_length
+      )
+    )
   then
     for i, v in ipairs(ruleset.rulers) do
       ruleset.rulers[i] = v + 1
