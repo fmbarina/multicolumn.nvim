@@ -77,17 +77,7 @@ end
 
 local function update_colorcolumn(ruleset, buf, win)
   local state = ruleset.always_on or get_exceeded(ruleset, buf, win)
-  local rulers = ''
-
-  if ruleset.on_exceeded then
-    local new_rulers = {}
-    for i, v in ipairs(ruleset.rulers) do
-      new_rulers[i] = v + 1
-    end
-    rulers = table.concat(new_rulers, ',')
-  else
-    rulers = table.concat(ruleset.rulers, ',')
-  end
+  local rulers = table.concat(ruleset.rulers, ',')
 
   if
     (state ~= vim.b.multicolumn_prev_state)
@@ -122,12 +112,9 @@ local function update_matches(ruleset, win)
   end
 
   if ruleset.to_line_end then
-    local col = vim.fn.min(ruleset.rulers)
-    if ruleset.on_exceeded then col = col + 1 end
-    add_match(line_prefix .. '\\%' .. col .. 'v[^\n].*$')
+    add_match(line_prefix .. '\\%' .. vim.fn.min(ruleset.rulers) .. 'v[^\n].*$')
   else
-    for _, v in pairs(ruleset.rules) do
-      if ruleset.on_exceeded then v = v + 1 end
+    for _, v in pairs(ruleset.rulers) do
       add_match(line_prefix .. '\\%' .. v .. 'v[^\n]')
     end
   end
