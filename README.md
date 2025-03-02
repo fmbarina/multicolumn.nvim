@@ -6,7 +6,7 @@ A Neovim plugin to (hopefully) satisfy all your colorcolumn needs.
 |-|-|
 |![py-to-end-win](https://github.com/fmbarina/multicolumn.nvim/assets/70731450/99ff8362-3cc5-4c10-b8bb-b7e2225e49ae)|![git-mixed-set](https://github.com/fmbarina/multicolumn.nvim/assets/70731450/50e97396-9c3d-4129-9579-ca17c7d39792)|
 
-## ✨ Features
+## Features
 
 - ⚙️ Highly configurable Colorcolumn
   - 🎯 Show focused colorcolumn at desired position(s)
@@ -15,54 +15,28 @@ A Neovim plugin to (hopefully) satisfy all your colorcolumn needs.
   - 🌈 Define your own color values
   - 😐 Enable always-on, when you want boring functionality
   - ⚡ Use a callback for dynamic settings
-  - ...and all of that configurable per filetype
-- 💾 Start enabled, disabled, or remember state from last time
-- 🔌 Toggle On/Off the entire plugin
+  - ...all configurable per filetype
+- 🔌 Toggle On/Off the entire plugin and remember state through sessions.
 - ⏰️ Refresh colorcolumn when you move, lazily or on timed intervals.
-- 🎈 Exclude floating windows - no more manually excluding lazy, mason, etc.
+- 🎈 Ignore floating windows - no manually excluding lazy, mason, etc.
 - 📄 Exclude specific filetypes
 
-## 📦 Installation
+## Installation
 
-For the "I know what I'm doing" users:
-- `fmbarina/multicolumn.nvim`
-- `require('multicolumn').setup(opts)` if you need.
+- Install `fmbarina/multicolumn.nvim`
+- Ensure `require('multicolumn').setup(opts)` is called.
 
-<details>
-<summary>For lazy.nvim users</summary>
+Using lazy.nvim:
 
-  Add the following to your plugin list, your settings go in opts.
+```lua
+{
+  'fmbarina/multicolumn.nvim',
+  event = { 'BufReadPre', 'BufNewFile' },
+  opts = {},
+}
+```
 
-  ```lua
-  {
-      'fmbarina/multicolumn.nvim',
-      event = { 'BufReadPre', 'BufNewFile' },
-      opts = {},
-  }
-  ```
-
-</details>
-
-<details>
-<summary>For packer.nvim users</summary>
-
-  Installation:
-
-  ```lua
-  use('fmbarina/multicolumn.nvim')
-  ```
-
-  Setup:
-
-  ```lua
-  require('multicolumn').setup()
-  ```
-
-  Your settings can be passed through the setup function.
-
-</details>
-
-## 🔧 Configuration
+## Configuration
 
 The settings table (`opts`) may define the following fields.
 
@@ -142,47 +116,41 @@ sets = {
 },
 ```
 
-### Banner settings
+### Example settings
 
-<details>
-<summary>Click me to see the settings used in the image(s) at the top of the README</summary>
-
-  ```lua
-  sets = {
-      lua = {
-          scope = 'file',
-          rulers = { 81 },
-          full_column = true,
-      },
-      python = {
-          scope = 'window',
-          rulers = { 80 },
-          to_line_end = true,
-          bg_color = '#f08800',
-          fg_color = '#17172e',
-      },
-      c = {
-          scope = 'window',
-          rulers = { 81 },
-          to_line_end = true,
-          always_on = true,
-      },
-      NeogitCommitMessage = function(buf, win)
-          local T = function(c, x, y) if c then return x else return y end
-          return {
-              scope = T(vim.fn.line('.', win) == 1, 'line', 'window'),
-              rulers = { T(vim.fn.line('.', win) == 1, 51, 73) },
-              to_line_end = true,
-              bg_color = '#691b1b',
-              fg_color = '#ffd8ad',
-          }
-      end,
+```lua
+sets = {
+  lua = {
+      scope = 'file',
+      rulers = { 81 },
+      full_column = true,
   },
-  ```
+  python = {
+      scope = 'window',
+      rulers = { 80 },
+      to_line_end = true,
+      bg_color = '#f08800',
+      fg_color = '#17172e',
+  },
+  c = {
+      scope = 'window',
+      rulers = { 81 },
+      to_line_end = true,
+      always_on = true,
+  },
+  gitcommit = function(buf, win)
+      local T = function(c, x, y) if c then return x else return y end
+      return {
+          scope = T(vim.fn.line('.', win) == 1, 'line', 'window'),
+          rulers = { T(vim.fn.line('.', win) == 1, 51, 73) },
+          to_line_end = true,
+          bg_color = '#691b1b',
+          fg_color = '#ffd8ad',
+      }
+  end,
+},
+```
 
-</details>
-
-## 🙇 Acknowledgements
+## Acknowledgements
 
 This plugin draws great inpiration from [NeoColumn.nvim](https://github.com/ecthelionvi/NeoColumn.nvim "Thank you, Robert!") and [smartcolumn.nvim](https://github.com/m4xshen/smartcolumn.nvim "Thank you, Max!"). They were used as references and even some terms were borrowed from them, but more than that, they were what pushed me to create this plugin. Multicolumn wouldn't exist without them, so, thank you!
-
