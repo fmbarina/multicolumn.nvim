@@ -96,9 +96,9 @@ local function update_colorcolumn(ruleset, buf, win)
   end
 end
 
--- NOTE: would be interesting to scope matches to buffer (passed as 'buf' arg,
--- as in update_colorcolumn), if that feature is ever implemented in [neo]vim
 local function update_matches(ruleset, win)
+  -- NOTE: be interesting to scope matches to buffer (passed as 'buf' arg,
+  -- as in update_colorcolumn), if that functionality is ever implemented
   vim.fn.clearmatches()
 
   local line_prefix = ''

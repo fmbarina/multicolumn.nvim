@@ -101,6 +101,7 @@ local function command_create()
   end
 end
 
+---@param opts? multicolumn.Opts
 M.setup = function(opts)
   local ok = config.build(opts or {})
 
