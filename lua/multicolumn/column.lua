@@ -41,13 +41,11 @@ end
 -- Inspired by the work of loicreynier in smartcolumn.nvim
 local function get_editorconfig_ruler()
   local max_line_length = vim.b.editorconfig
-      and vim.b.editorconfig.max_line_length ~= 'off'
-      and vim.b.editorconfig.max_line_length ~= 'unset'
-      and vim.b.editorconfig.max_line_length
+    and vim.b.editorconfig.max_line_length ~= 'off'
+    and vim.b.editorconfig.max_line_length ~= 'unset'
+    and vim.b.editorconfig.max_line_length
 
-  if max_line_length then
-    return { tonumber(max_line_length) + 1 }
-  end
+  if max_line_length then return { tonumber(max_line_length) } end
 end
 
 local function get_exceeded(ruleset, buf, win)
@@ -65,6 +63,9 @@ local function get_exceeded(ruleset, buf, win)
   end
 
   local col = vim.fn.min(ruleset.rulers)
+
+  if ruleset.on_exceeded then col = col + 1 end
+
   for _, line in pairs(lines) do
     local ok, cells = pcall(vim.fn.strdisplaywidth, line)
     if not ok then return false end
