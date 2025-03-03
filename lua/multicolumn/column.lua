@@ -10,7 +10,9 @@ end
 
 function M.clear_all()
   for _, win in pairs(vim.api.nvim_list_wins()) do
-    if vim.wo[win].colorcolumn then vim.wo[win].colorcolumn = '' end
+    if vim.wo[win].colorcolumn then
+      vim.wo[win].colorcolumn = ''
+    end
     vim.fn.clearmatches(win)
   end
   for _, buf in pairs(vim.api.nvim_list_bufs()) do
@@ -21,7 +23,9 @@ end
 
 local function is_floating(win)
   local cfg = vim.api.nvim_win_get_config(win)
-  if cfg.relative > '' or cfg.external then return true end
+  if cfg.relative > '' or cfg.external then
+    return true
+  end
   return false
 end
 
@@ -41,10 +45,9 @@ end
 -- Inspired by the work of loicreynier in smartcolumn.nvim
 local function get_editorconfig_ruler()
   local max_line_length = vim.b.editorconfig
-      and vim.b.editorconfig.max_line_length ~= 'off'
-      and vim.b.editorconfig.max_line_length ~= 'unset'
-      and vim.b.editorconfig.max_line_length
-
+    and vim.b.editorconfig.max_line_length ~= 'off'
+    and vim.b.editorconfig.max_line_length ~= 'unset'
+    and vim.b.editorconfig.max_line_length
   if max_line_length then
     return { tonumber(max_line_length) + 1 }
   end
@@ -67,8 +70,12 @@ local function get_exceeded(ruleset, buf, win)
   local col = vim.fn.min(ruleset.rulers)
   for _, line in pairs(lines) do
     local ok, cells = pcall(vim.fn.strdisplaywidth, line)
-    if not ok then return false end
-    if col <= cells then return true end
+    if not ok then
+      return false
+    end
+    if col <= cells then
+      return true
+    end
   end
 
   return false
@@ -191,7 +198,9 @@ local function create_update_aucmds(win)
     })
     return M.update(win)
   elseif type(config.opts.update) == 'number' then
-    if timer then return end
+    if timer then
+      return
+    end
 
     timer = vim.loop.new_timer()
     if timer == nil then
@@ -220,7 +229,9 @@ function M.reload()
   vim.api.nvim_create_augroup('MulticolumnUpdate', {})
 
   if timer then
-    if not timer:is_closing() then timer:close() end
+    if not timer:is_closing() then
+      timer:close()
+    end
     timer = nil
   end
 
@@ -232,7 +243,9 @@ function M.reload()
   -- This may be revisited in a future release, but for now it'll do.
   vim.defer_fn(function()
     local win = vim.api.nvim_get_current_win()
-    if is_disabled(win) then return end
+    if is_disabled(win) then
+      return
+    end
     return create_update_aucmds(win)
   end, 50)
 end
