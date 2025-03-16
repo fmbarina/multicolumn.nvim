@@ -1,18 +1,41 @@
 local M = {}
 
+---@class multicolumn.Ruleset
+---@field scope? 'file' | 'window' | 'line'
+---@field rulers integer[]
+---@field to_line_end? boolean
+---@field full_column? boolean
+---@field always_on? boolean
+---@field bg_color? string
+---@field fg_color? string
+
+---@class multicolumn.Opts
+---@field start? 'enabled' | 'disabled' | 'remember'
+---@field update? 'on_move' | 'lazy_hold' | integer
+---@field command? 'multiple' | 'single' | 'none'
+---@field max_lines? integer
+---@field max_size? integer
+---@field use_default_set? boolean
+---@field exclude_floating? boolean
+---@field exclude_ft? string[]
+---@field editorconfig? boolean
+---@field base_set? multicolumn.Ruleset
+---@field sets? { [string]: multicolumn.Ruleset }
+
+---@type multicolumn.Opts
 local defaults = {
-  start = 'enabled', -- enabled, disabled, remember
-  update = 'on_move', -- on_move, lazy_hold, int
-  command = 'multiple', -- multiple, single, none
-  max_lines = 6000, -- 0 (disabled) OR int
-  max_size = 64 * 1024 * 1024, -- 0 (disabled) OR int
+  start = 'enabled',
+  update = 'on_move',
+  command = 'multiple',
+  max_lines = 6000,
+  max_size = 64 * 1024 * 1024,
   use_default_set = true,
   exclude_floating = true,
   exclude_ft = { 'markdown', 'help', 'netrw' },
   editorconfig = false,
   base_set = {
-    scope = 'window', -- file, window, line
-    rulers = {}, -- { int, int, ... }
+    scope = 'window',
+    rulers = {},
     to_line_end = false,
     full_column = false,
     always_on = false,
@@ -27,8 +50,7 @@ local defaults = {
   },
 }
 
-M.opts = {}
-
+---@param set multicolumn.Ruleset
 function M.fix_set(set)
   -- Some configs imply others. Fixing nonsensical stuff early on helps simplify
   -- code later by reducing the amount of cases that must be handled.
@@ -44,6 +66,7 @@ function M.fix_set(set)
   return set
 end
 
+---@param opts? multicolumn.Opts
 function M.build(opts)
   local cfg = vim.tbl_deep_extend('force', {}, defaults, opts or {})
 

@@ -27,7 +27,9 @@ local function save_enabled_state()
 end
 
 M.enable = function()
-  if enabled then return end
+  if enabled then
+    return
+  end
   enabled = true
 
   -- Give theme plugins some time to set the default highlight
@@ -45,7 +47,9 @@ M.enable = function()
 end
 
 M.disable = function()
-  if not enabled then return end
+  if not enabled then
+    return
+  end
   enabled = false
 
   vim.api.nvim_del_augroup_by_name('MulticolumnReload')
@@ -101,10 +105,13 @@ local function command_create()
   end
 end
 
+---@param opts? multicolumn.Opts
 M.setup = function(opts)
   local ok = config.build(opts or {})
 
-  if not ok then return end
+  if not ok then
+    return
+  end
 
   local start_enabled = false
   if config.opts.start == 'remember' then
@@ -118,7 +125,9 @@ M.setup = function(opts)
     start_enabled = (config.opts.start == 'enabled')
   end
 
-  if start_enabled then M.enable() end
+  if start_enabled then
+    M.enable()
+  end
 
   command_create()
 end
