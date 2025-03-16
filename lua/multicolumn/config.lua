@@ -6,6 +6,7 @@ local M = {}
 ---@field to_line_end? boolean
 ---@field full_column? boolean
 ---@field always_on? boolean
+---@field on_exceeded? boolean
 ---@field bg_color? string
 ---@field fg_color? string
 
