@@ -13,7 +13,9 @@ function M.clear_all()
     if vim.wo[win].colorcolumn then
       vim.wo[win].colorcolumn = ''
     end
-    vim.fn.clearmatches(win)
+    for _, match in pairs(vim.w[win].multicolumn_matches or {}) do
+      vim.fn.matchdelete(match, win)
+    end
   end
   for _, buf in pairs(vim.api.nvim_list_bufs()) do
     vim.b[buf].multicolumn_prev_state = nil
@@ -117,7 +119,10 @@ local function update_matches(ruleset, win)
   end
 
   local function add_match(pattern)
-    vim.fn.matchadd('ColorColumn', pattern, nil, -1, { window = win })
+    local m = vim.fn.matchadd('ColorColumn', pattern, nil, -1, { window = win })
+    if m ~= -1 then
+      table.insert(vim.w[win].multicolumn_matches or {}, m)
+    end
   end
 
   if ruleset.to_line_end then
