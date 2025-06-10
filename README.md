@@ -78,6 +78,7 @@ These are the options that multicolumn.nvim looks for in a set:
 | **to_line_end** | `bool`                               | Whether to highlight characters exceeding the colorcolumn to the end of the line                    |
 | **full_column** | `bool`                               | Whether to draw a full colorcolumn (window ceiling to bottom) when the column number is hit         |
 | **always_on**   | `bool`                               | Whether to always draw the full colorcolumns. When true, implies `full_column` is true as well      |
+| **on_exceeded** | `bool`                               | Whether to draw colorcolumn when line length exceeds ruler value.                                   |
 | **bg_color**    | `string`: hex code (e.g. "#c92aaf")  | Background highlight color of the colorcolumn as a hex code                                         |
 | **fg_color**    | `string`: hex code (e.g. "#c92aaf")  | Foreground highlight color of the colorcolumn as a hex code                                         |
 

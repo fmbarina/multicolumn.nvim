@@ -70,6 +70,11 @@ local function get_exceeded(ruleset, buf, win)
   end
 
   local col = vim.fn.min(ruleset.rulers)
+
+  if ruleset.on_exceeded then
+    col = col + 1
+  end
+
   for _, line in pairs(lines) do
     local ok, cells = pcall(vim.fn.strdisplaywidth, line)
     if not ok then
